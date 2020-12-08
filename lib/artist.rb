@@ -1,42 +1,30 @@
 require 'pry'
 
 class Artist
-  attr_accessor :name
-  attr_reader :songs
+  include Memorable::InstanceMethods  # brings instance methods in from nested module
+  extend Memorable::ClassMethods  # brings class methods in from nested module
+  extend Findable # brings in class methods from module
+  include Paramable # brings in instance methods from module
+  attr_accessor :name # name has set and get methods
+  attr_reader :songs  # songs just have get
 
   @@artists = []
 
-  def initialize
-    @@artists << self
-    @songs = []
+  def initialize  # run initialize method in super module
+    super
+    @songs = [] # when that has executed we finish with this code
   end
 
-  def self.find_by_name(name)
-    @@artists.detect{|a| a.name == name}
-  end
-
-  def self.all
+  def self.all  # sets getter for Artist.all (this allows abstraction in modules using self.class.all)
     @@artists
   end
 
-  def self.reset_all
-    self.all.clear
-  end
-
-  def self.count
-    self.all.count
-  end
-
-  def add_song(song)
+  def add_song(song)  # adds song to @songs array
     @songs << song
     song.artist = self
   end
 
-  def add_songs(songs)
+  def add_songs(songs)  # adds multiple songs to @songs array
     songs.each { |song| add_song(song) }
-  end
-
-  def to_param
-    name.downcase.gsub(' ', '-')
   end
 end
